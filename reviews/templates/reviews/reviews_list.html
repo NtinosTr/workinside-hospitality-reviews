@@ -1,0 +1,123 @@
+{% load get_item %}
+{% load dept_icons %}
+
+{% for review in reviews %}
+<div class="review-card">
+    <div class="review-header">
+
+        <!-- Avatar -->
+        <div class="avatar" style="background: {{ review.department.name|pastel_color }}33; color: {{ review.department.name|pastel_color }};">
+            {{ review.author|first|upper }}
+        </div>
+
+        <!-- Department + Icon -->
+        <span class="tag" style="background: {{ review.department.name|pastel_color }}22; color: {{ review.department.name|pastel_color }};">
+            {{ review.department.name }} {{ review.department.name|dept_icon }}
+        </span>
+
+        <!-- Department Score -->
+        {% if department_scores %}
+        {% with score=department_scores|get_item:review.department.id %}
+        {% if score %}
+        <span class="dept-score score-{{ score|floatformat:0 }}">{{ score }}</span>
+        {% endif %}
+        {% endwith %}
+        {% endif %}
+
+        <!-- Rating -->
+        <span class="rating">{{ review.rating }}/10</span>
+
+        <!-- Date -->
+        <span class="date">{{ review.created_at|timesince }} ago</span>
+    </div>
+
+    <!-- Review Comment -->
+    <p class="comment">{{ review.comment }}</p>
+
+    <!-- LEGAL DISCLAIMER -->
+    <p class="legal-disclaimer" style="font-size:12px; opacity:0.6; margin-top:8px;">
+        ⚠️ Opinions expressed in this review belong solely to the user and do not represent the views of WorkInside.
+    </p>
+
+</div>
+
+{% empty %}
+<p style="text-align:center; opacity:0.6; margin-top:20px;">No reviews found.</p>
+{% endfor %}
+
+
+<style>
+.review-card {
+    background:#151515;
+    border:1px solid #2a2a2a;
+    border-radius:10px;
+    padding:18px;
+    margin-bottom:16px;
+    animation: fadeIn 0.25s ease;
+}
+
+.review-header {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:8px;
+}
+
+/* Avatar */
+.avatar {
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:600;
+    font-size:15px;
+}
+
+/* Department Score */
+.dept-score {
+    padding:4px 10px;
+    border-radius:50px;
+    font-size:13px;
+}
+
+/* Score Color Logic */
+.score-8, .score-9, .score-10 {
+    background:#1f3d29;
+    border:1px solid #7DFF9E;
+    color:#7DFF9E;
+}
+.score-6, .score-7 {
+    background:#3d3921;
+    border:1px solid #F3DA5B;
+    color:#F3DA5B;
+}
+.score-1, .score-2, .score-3, .score-4, .score-5 {
+    background:#432323;
+    border:1px solid #FF6D6D;
+    color:#FF6D6D;
+}
+
+.rating {
+    color:#d9a8ff;
+    font-weight:bold;
+    font-size:15px;
+}
+
+.date {
+    color:#888;
+    font-size:13px;
+    margin-left:auto;
+}
+
+.comment {
+    color:#e8e8e8;
+    line-height:1.5;
+}
+
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(4px);}
+  to { opacity:1; transform:translateY(0);}
+}
+</style>

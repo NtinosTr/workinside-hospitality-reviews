@@ -1,0 +1,174 @@
+{% extends 'reviews/base.html' %}
+{% block content %}
+
+<div class="review-page">
+  <div class="review-wrapper">
+
+    <h2 class="page-title">Leave a Review</h2>
+
+    {% if error %}
+      <p class="error-msg">{{ error }}</p>
+    {% endif %}
+
+    <div class="form-container">
+      <form method="POST" class="review-form">
+        {% csrf_token %}
+
+        <!-- HOTEL (Google Places) -->
+        <div class="form-group">
+          <label>Hotel</label>
+          <input
+            id="hotel-search"
+            class="input-field"
+            type="text"
+            placeholder="Type hotel name..."
+            autocomplete="off"
+            required
+          >
+        </div>
+
+        <!-- Hidden hotel fields -->
+        <input type="hidden" name="hotel_name" id="hotel_name">
+        <input type="hidden" name="hotel_address" id="hotel_address">
+        <input type="hidden" name="hotel_country" id="hotel_country">
+        <input type="hidden" name="hotel_lat" id="hotel_lat">
+        <input type="hidden" name="hotel_lon" id="hotel_lon">
+
+        <!-- DEPARTMENT -->
+        <div class="form-group">
+          <label>Department</label>
+          <select name="department" class="input-field" required>
+            {% for d in departments %}
+              <option value="{{ d.id }}">{{ d.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- RATING -->
+        <div class="form-group">
+          <label>Rating</label>
+          <div class="rating-stars centered">
+            {% for i in "1234567890" %}
+              <span class="star" data-value="{{ forloop.counter }}">★</span>
+            {% endfor %}
+          </div>
+          <input type="hidden" name="rating" id="rating" required>
+        </div>
+
+        <!-- REVIEW TEXT -->
+        <div class="form-group">
+          <label>Your Review</label>
+          <textarea
+            name="comment"
+            class="input-field review-textarea"
+            rows="5"
+            placeholder="Share your experience with this hotel..."
+            required
+          ></textarea>
+        </div>
+
+        <!-- NAME -->
+        <div class="form-group inline-two">
+          <div>
+            <label>Name (optional)</label>
+            <input
+              name="name"
+              type="text"
+              class="input-field"
+              placeholder="Anonymous"
+            >
+          </div>
+
+          <!-- EMAIL -->
+          <div>
+            <label>Email (for verification)</label>
+            <input
+              name="email"
+              type="email"
+              class="input-field"
+              placeholder="you@example.com"
+              required
+            >
+          </div>
+        </div>
+
+        <!-- TERMS -->
+        <div class="terms">
+          <input type="checkbox" name="agree" required>
+          <span>
+            I confirm that this review is truthful and based on my real experience.
+          </span>
+        </div>
+
+        <!-- SUBMIT -->
+        <button type="submit" class="submit-btn">
+          Submit Review
+        </button>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ⭐ STAR RATING SCRIPT -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const stars = document.querySelectorAll(".rating-stars .star");
+  const ratingInput = document.getElementById("rating");
+
+  if (!stars.length || !ratingInput) return;
+
+  stars.forEach(star => {
+    star.addEventListener("click", () => {
+      const value = parseInt(star.dataset.value, 10);
+      ratingInput.value = value;
+
+      stars.forEach(s => {
+        s.classList.toggle(
+          "selected",
+          parseInt(s.dataset.value, 10) <= value
+        );
+      });
+    });
+  });
+});
+</script>
+
+<!-- 🏨 GOOGLE AUTOCOMPLETE -->
+<script>
+function initAutocomplete() {
+  const input = document.getElementById("hotel-search");
+  if (!input) return;
+
+  const autocomplete = new google.maps.places.Autocomplete(input, {
+    types: ["establishment"],
+    fields: ["name", "formatted_address", "geometry", "address_components"]
+  });
+
+  autocomplete.addListener("place_changed", () => {
+    const place = autocomplete.getPlace();
+    if (!place) return;
+
+    document.getElementById("hotel_name").value = place.name || "";
+    document.getElementById("hotel_address").value = place.formatted_address || "";
+    document.getElementById("hotel_lat").value = place.geometry?.location?.lat() || "";
+    document.getElementById("hotel_lon").value = place.geometry?.location?.lng() || "";
+
+    let country = "";
+    (place.address_components || []).forEach(c => {
+      if (c.types.includes("country")) {
+        country = c.long_name;
+      }
+    });
+    document.getElementById("hotel_country").value = country || "";
+  });
+}
+</script>
+
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAQHMMhIQ3zkuWsniWhIAupw_a7PfL7qbQ&libraries=places&callback=initAutocomplete"
+  async
+  defer
+></script>
+
+{% endblock %}

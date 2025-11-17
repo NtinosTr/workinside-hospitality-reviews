@@ -1,0 +1,300 @@
+{% extends 'reviews/base.html' %}
+{% load get_item %}
+{% block content %}
+
+<div class="hotel-detail-wrapper fadeZoom">
+
+    <!-- ======================= -->
+    <!-- HOTEL HEADER -->
+    <!-- ======================= -->
+    <div class="hotel-top">
+        <div class="hotel-info">
+            <h1 class="hotel-name">{{ hotel.name }}</h1>
+
+            {% if review_count > 0 %}
+            <p class="hotel-rating">
+                ⭐ <span>{{ avg_rating|floatformat:1 }}</span> / 10
+                <span class="review-count">({{ review_count }} reviews)</span>
+            </p>
+            {% endif %}
+        </div>
+
+        {% if review_count > 0 %}
+        <div class="rating-bar-wrap">
+            <div class="rating-bar">
+                <div class="rating-fill" style="width: {{ avg_rating|floatformat:0 }}0%;"></div>
+            </div>
+            <span class="rating-number">{{ avg_rating|floatformat:1 }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- ======================= -->
+    <!-- DEPARTMENT SCORES -->
+    <!-- ======================= -->
+    {% if department_scores %}
+    <div class="dept-overview">
+        {% for d in departments %}
+            {% with score=department_scores|get_item:d.id %}
+            {% if score %}
+            <div class="dept-row">
+                <span class="dept-name">{{ d.name }}</span>
+                <div class="dept-bar">
+                    <div class="dept-bar-fill" style="width: {{ score|floatformat:0 }}0%;"></div>
+                </div>
+                <span class="dept-score-label">{{ score|floatformat:1 }}/10</span>
+            </div>
+            {% endif %}
+            {% endwith %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ======================= -->
+    <!-- FILTERS -->
+    <!-- ======================= -->
+    <div class="filters">
+        <label>Department:</label>
+        <select id="filter-department">
+            <option value="">All</option>
+            {% for d in departments %}
+            <option value="{{ d.id }}">{{ d.name }}</option>
+            {% endfor %}
+        </select>
+
+        <label style="margin-left:20px;">Rating:</label>
+        <select id="filter-rating">
+            <option value="">All</option>
+            <option value="9">9+</option>
+            <option value="8">8+</option>
+            <option value="7">7+</option>
+            <option value="6">6+</option>
+            <option value="5">5+</option>
+        </select>
+
+        <label style="margin-left:20px;">Sort:</label>
+        <select id="filter-sort">
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+        </select>
+    </div>
+
+    <!-- ======================= -->
+    <!-- REVIEWS LIST -->
+    <!-- ======================= -->
+    <div id="reviews-container">
+        {% include "reviews/reviews_list.html" with department_scores=department_scores %}
+    </div>
+
+    <!-- ======================= -->
+    <!-- LOAD MORE BUTTON -->
+    <!-- ======================= -->
+    <button id="load-more-btn" class="load-more">Load More Reviews</button>
+
+</div>
+
+<!-- ======================= -->
+<!-- LEGAL DISCLAIMER (GLOBAL) -->
+<!-- ======================= -->
+<p style="text-align:center; margin-top:25px; font-size:12px; opacity:0.6;">
+⚠️ Reviews are personal opinions and do not represent the views of WorkInside.
+</p>
+
+<!-- ======================= -->
+<!-- STYLES -->
+<!-- ======================= -->
+<style>
+.fadeZoom { animation: fadeZoom 0.6s ease; }
+@keyframes fadeZoom {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.hotel-detail-wrapper {
+    max-width: 900px;
+    margin: 50px auto 80px;
+    background: #151515;
+    padding: 30px 35px;
+    border-radius: 14px;
+    border: 1px solid #2a2a2a;
+    box-shadow: 0 0 25px rgba(217,168,255,0.06);
+}
+
+/* Header */
+.hotel-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #2a2a2a;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+.hotel-name {
+    font-size: 1.8rem;
+    color: #eaeaea;
+    margin: 0;
+}
+.hotel-rating {
+    color: #bdb2ff;
+    font-size: 1.1rem;
+    margin-top: 6px;
+}
+.review-count { color: #999; font-size: 0.9rem; }
+
+/* Rating bar */
+.rating-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.rating-bar {
+    width: 160px;
+    height: 8px;
+    border-radius: 6px;
+    background: #2a2a2a;
+    overflow: hidden;
+}
+.rating-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #b46bff, #d9a8ff);
+}
+.rating-number {
+    color: #d9a8ff;
+    font-weight: 600;
+}
+
+/* Department overview */
+.dept-overview {
+    margin-top: 20px;
+    margin-bottom: 25px;
+}
+.dept-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+}
+.dept-name {
+    width: 150px;
+    color: #eaeaea;
+}
+.dept-bar {
+    flex: 1;
+    height: 8px;
+    border-radius: 6px;
+    background: #2a2a2a;
+    overflow: hidden;
+}
+.dept-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #b46bff, #d9a8ff);
+}
+.dept-score-label {
+    color: #bdb2ff;
+    font-weight: 600;
+    width: 60px;
+    text-align: right;
+}
+
+/* Filters */
+.filters {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 30px 0 20px;
+    flex-wrap: wrap;
+}
+.filters label {
+    color: #bdb2ff;
+    font-size: 0.95rem;
+}
+.filters select {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    color: #eee;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: 0.25s;
+}
+.filters select:focus {
+    border-color: #d9a8ff;
+    outline: none;
+}
+
+/* Load More */
+.load-more {
+    display: block;
+    margin: 30px auto 0;
+    background: #d9a8ff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+.load-more:hover {
+    filter: brightness(1.15);
+    transform: translateY(-2px);
+}
+.load-more.hide { display: none; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hotel-detail-wrapper { padding: 25px 18px; }
+  .hotel-name { font-size: 1.5rem; }
+  .filters { flex-direction: column; gap: 10px; }
+  .dept-name { width: 120px; }
+}
+</style>
+
+<!-- ======================= -->
+<!-- SCRIPT -->
+<!-- ======================= -->
+<script>
+let offset = 5;
+
+function loadReviews() {
+    const department = document.getElementById("filter-department").value;
+    const rating = document.getElementById("filter-rating").value;
+    const sort = document.getElementById("filter-sort").value;
+
+    fetch("{% url 'filter_reviews' hotel.id %}?department=" + department + "&rating=" + rating + "&sort=" + sort)
+    .then(response => response.text())
+    .then(html => {
+        const container = document.getElementById("reviews-container");
+        container.style.opacity = "0";
+        setTimeout(() => {
+            container.innerHTML = html;
+            container.style.opacity = "1";
+            offset = 5;
+            document.getElementById("load-more-btn").classList.remove("hide");
+        }, 150);
+    });
+}
+
+document.getElementById("filter-department").addEventListener("change", loadReviews);
+document.getElementById("filter-rating").addEventListener("change", loadReviews);
+document.getElementById("filter-sort").addEventListener("change", loadReviews);
+
+document.getElementById("load-more-btn").addEventListener("click", () => {
+    const department = document.getElementById("filter-department").value;
+    const rating = document.getElementById("filter-rating").value;
+    const sort = document.getElementById("filter-sort").value;
+
+    fetch("{% url 'load_more_reviews' hotel.id %}?offset=" + offset + "&department=" + department + "&rating=" + rating + "&sort=" + sort)
+    .then(response => response.text())
+    .then(html => {
+        if (html.trim() === "") {
+            document.getElementById("load-more-btn").classList.add("hide");
+        } else {
+            document.getElementById("reviews-container").insertAdjacentHTML("beforeend", html);
+            offset += 5;
+        }
+    });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,287 @@
+{% extends 'reviews/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="main-layout">
+
+    <!-- ===================== -->
+    <!-- LEFT SIDE: MAIN SEARCH -->
+    <!-- ===================== -->
+    <div class="main-section">
+        <h1 class="page-title" style="text-align:center; margin-top:35px; margin-bottom:10px;">
+            Find Your Workplace
+        </h1>
+
+        <!-- 🔹 SLOGAN -->
+        <h2 class="subtitle fade-in">
+            Your experience matters and it deserves to be heard.
+        </h2>
+
+        <!-- SEARCH BAR -->
+        <div class="search-box">
+            <input type="text" id="hotel-search" placeholder="Search hotels...">
+            <span class="clear-btn" id="clear-btn">&times;</span>
+            <div id="search-suggestions" class="suggestions-box"></div>
+        </div>
+
+        <!-- RESULTS COUNT -->
+        <p id="results-count" style="text-align:center; opacity:0.7; margin-bottom:10px;"></p>
+
+        <!-- HOTEL LIST -->
+        <div class="hotel-list fade-grid">
+            {% for hotel in hotels %}
+            <a href="/reviews/hotel/{{ hotel.id }}/"
+               class="hotel-card interactive-hover"
+               data-name="{{ hotel.name|lower }}">
+                <div class="hotel-card-content">
+                    <div class="hotel-header">
+                        <h3>{{ hotel.name }}</h3>
+                        {% if hotel.location %}
+                        <span class="country-badge">{{ hotel.location|slice:":2"|upper }}</span>
+                        {% endif %}
+                    </div>
+                    {% if hotel.location %}
+                    <p class="location">{{ hotel.location }}</p>
+                    {% endif %}
+                </div>
+            </a>
+            {% empty %}
+                <p style="text-align:center; opacity:0.7;">No hotels added yet...</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- ===================== -->
+    <!-- RIGHT SIDE: TOP HOTELS -->
+    <!-- ===================== -->
+    <aside class="top-hotels-sidebar fade-in-slow">
+        <h3>🏨 Top Rated Hotels</h3>
+        <ul>
+            {% for hotel in top_hotels %}
+            <li>
+                <a href="/reviews/hotel/{{ hotel.id }}/" class="top-hotel-link">
+                    <span class="rank">#{{ forloop.counter }}</span>
+                    <span class="name">{{ hotel.name }}</span>
+                    <span class="rating">⭐ {{ hotel.avg_rating|floatformat:1 }}</span>
+                </a>
+            </li>
+            {% empty %}
+            <p style="text-align:center; opacity:0.7;">No ratings yet...</p>
+            {% endfor %}
+        </ul>
+    </aside>
+</div>
+
+<!-- ===================== -->
+<!-- SCRIPT (FULL FIXED) -->
+<!-- ===================== -->
+<script>
+const searchInput = document.getElementById("hotel-search");
+const clearBtn = document.getElementById("clear-btn");
+const hotelList = document.querySelector(".hotel-list");
+const suggestionsBox = document.getElementById("search-suggestions");
+const resultsCount = document.getElementById("results-count");
+
+async function fetchHotels(query = "") {
+    const res = await fetch(`/reviews/search/?q=${encodeURIComponent(query)}`);
+    const data = await res.json();
+    return data.results;
+}
+
+async function renderHotels(query = "") {
+    const hotels = await fetchHotels(query);
+    hotelList.innerHTML = "";
+    suggestionsBox.innerHTML = "";
+
+    if (hotels.length === 0) {
+        resultsCount.textContent = "No results found...";
+        hotelList.innerHTML = `<p style="text-align:center; opacity:0.7;">No hotels found...</p>`;
+        suggestionsBox.style.display = "none";
+        return;
+    }
+
+    resultsCount.textContent = `${hotels.length} result${hotels.length > 1 ? "s" : ""} found`;
+
+    hotels.forEach(hotel => {
+        const card = `
+        <a href="/reviews/hotel/${hotel.id}/" class="hotel-card interactive-hover fade-in">
+            <div class="hotel-card-content">
+                <div class="hotel-header">
+                    <h3>${hotel.name}</h3>
+                    ${hotel.location ? `<span class="country-badge">${hotel.location.slice(0,2).toUpperCase()}</span>` : ""}
+                </div>
+                <p class="location">${hotel.location || ''}</p>
+            </div>
+        </a>`;
+        hotelList.insertAdjacentHTML("beforeend", card);
+
+        const item = document.createElement("div");
+        item.classList.add("suggestion-item");
+        item.innerHTML = `<strong>${hotel.name}</strong> <small style="opacity:0.6;">${hotel.location || ""}</small>`;
+        item.addEventListener("click", () => window.location.href = `/reviews/hotel/${hotel.id}/`);
+        suggestionsBox.appendChild(item);
+    });
+
+    suggestionsBox.style.display = query ? "block" : "none";
+}
+
+window.addEventListener("DOMContentLoaded", () => renderHotels());
+
+searchInput.addEventListener("input", async () => {
+    const query = searchInput.value.trim();
+    clearBtn.style.display = query ? "block" : "none";
+    await renderHotels(query);
+});
+
+clearBtn.addEventListener("click", async () => {
+    searchInput.value = "";
+    clearBtn.style.display = "none";
+    suggestionsBox.style.display = "none";
+    await renderHotels();
+});
+
+document.addEventListener("click", e => {
+    if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+        suggestionsBox.style.display = "none";
+    }
+});
+</script>
+
+<!-- ===================== -->
+<!-- STYLES (UNCHANGED) -->
+<!-- ===================== -->
+<style>
+/* ===== MAIN LAYOUT ===== */
+.main-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 40px;
+    align-items: start;
+    max-width: 1200px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+/* ===== ANIMATIONS ===== */
+.fade-in { opacity: 0; animation: fadeIn 1.2s ease forwards; }
+.fade-in-slow { opacity: 0; animation: fadeIn 1.8s ease forwards; }
+.fade-grid a { opacity: 0; animation: fadeIn 0.9s ease forwards; animation-delay: 0.15s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ===== SLOGAN ===== */
+.subtitle {
+    text-align: center;
+    color: #bdb2ff;
+    font-size: 1.1rem;
+    font-weight: 400;
+    margin-top: -5px;
+    margin-bottom: 35px;
+    opacity: 0.9;
+    letter-spacing: 0.4px;
+}
+
+/* ===== SEARCH BAR ===== */
+.search-box { position: relative; text-align: center; margin: 0 auto 25px; width: 100%; }
+.search-box input {
+    width: 60%;
+    padding: 10px 35px 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #2a2a2a;
+    background: #111;
+    color: #eee;
+    font-size: 15px;
+}
+.search-box input:focus { border-color: #d9a8ff; outline: none; }
+.clear-btn {
+    position: absolute;
+    right: 22%;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #d9a8ff;
+    cursor: pointer;
+    display: none;
+}
+
+/* ===== SUGGESTIONS BOX ===== */
+.suggestions-box {
+    position: absolute;
+    top: 105%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    background: #1a1920;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    box-shadow: 0 0 12px rgba(217,168,255,0.15);
+    display: none;
+    z-index: 10;
+}
+.suggestion-item { padding: 10px 14px; cursor: pointer; transition: 0.25s; }
+.suggestion-item:hover { background: #2a2635; }
+
+/* ===== HOTEL LIST ===== */
+.hotel-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+    width: 100%;
+    margin-top: 20px;
+}
+.hotel-card {
+    text-decoration: none;
+    background: #151515;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 20px;
+    transition: 0.25s;
+    cursor: pointer;
+}
+.hotel-header { display:flex; justify-content:space-between; align-items:center; }
+.hotel-card-content h3 { margin: 0; color: #eaeaea; font-size: 18px; font-weight: 600; }
+.country-badge {
+    background:#d9a8ff2a;
+    border:1px solid #d9a8ff55;
+    color:#d9a8ff;
+    padding:3px 8px;
+    border-radius:6px;
+    font-size:12px;
+}
+.location { color: #b8b8b8; font-size: 14px; margin-top: 5px; }
+.interactive-hover:hover { transform: translateY(-4px); border-color: #d9a8ff; box-shadow: 0 0 14px rgba(217,168,255,0.35); }
+
+/* ===== SIDEBAR ===== */
+.top-hotels-sidebar {
+    background: rgba(17, 16, 21, 0.8);
+    border-radius: 14px;
+    padding: 22px 20px;
+    box-shadow: 0 0 25px rgba(217,168,255,0.08);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(217,168,255,0.1);
+}
+.top-hotels-sidebar h3 {
+    color: #d9a8ff;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: 600;
+}
+.top-hotels-sidebar ul { list-style: none; padding: 0; margin: 0; display:flex; flex-direction:column; gap:10px; }
+.top-hotels-sidebar li { background: #1a1920; border-radius: 8px; transition: 0.25s; }
+.top-hotels-sidebar li:hover { background: #24212c; }
+.top-hotel-link { display:flex; justify-content:space-between; align-items:center; text-decoration:none; padding:8px 12px; color:inherit; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:1024px){
+    .main-layout{ grid-template-columns:1fr; gap:25px; padding:0 25px; }
+    .search-box input { width:80%; font-size:16px; }
+}
+@media (max-width:768px){
+    .main-layout{ grid-template-columns:1fr; gap:20px; padding:0 18px; margin-top:20px; }
+    .search-box input{ width:100%; font-size:15px; }
+    .suggestions-box{ width:100%; left:0; transform:none; border-radius:10px; }
+    .hotel-list{ grid-template-columns:1fr; }
+}
+</style>
+
+{% endblock %}

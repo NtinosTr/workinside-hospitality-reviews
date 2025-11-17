@@ -1,0 +1,46 @@
+{% extends 'reviews/base.html' %}
+
+{% block content %}
+
+<div class="center-wrapper">
+
+    {% if success %}
+    <h2 class="page-title" style="color:#d9a8ff;">✅ Review Verified</h2>
+    <p style="opacity:0.8; margin-top:10px;">
+       Your review is now publicly visible. Thank you for contributing to WorkInside.
+    </p>
+    {% endif %}
+
+    {% if error %}
+    <h2 class="page-title" style="color:#ff6b6b;">❌ Verification Failed</h2>
+    <p style="opacity:0.8; margin-top:10px;">
+       The link is invalid or expired.
+    </p>
+    {% endif %}
+
+    <a href="/" class="button">Return to Home</a>
+
+</div>
+
+<style>
+.center-wrapper {
+    text-align:center;
+    margin-top:80px;
+}
+.button {
+    display:inline-block;
+    margin-top:25px;
+    padding:10px 18px;
+    background:#d9a8ff;
+    border-radius:6px;
+    font-weight:bold;
+    color:#000;
+    text-decoration:none;
+    transition:0.25s;
+}
+.button:hover {
+    filter:brightness(1.15);
+}
+</style>
+
+{% endblock %}

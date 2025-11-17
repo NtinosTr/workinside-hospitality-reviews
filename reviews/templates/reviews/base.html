@@ -1,0 +1,77 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WorkInside</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/workinside.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'img/workinside_icon.png' %}">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <a href="{% url 'home' %}" class="logo">
+        <img src="{% static 'img/workinside_logo.png' %}" alt="WorkInside Logo" class="logo-img">
+        <span class="logo-text">WorkInside</span>
+    </a>
+
+    <a href="{% url 'review_form' %}" class="leave-btn">Leave Review</a>
+</nav>
+
+<!-- PAGE CONTENT -->
+<div class="page-content">
+    {% block content %}{% endblock %}
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <p>© 2025 WorkInside</p>
+    <div class="footer-links">
+        <a href="/reviews/privacy/">Privacy</a>
+        <a href="/reviews/terms/">Terms</a>
+        <a href="/reviews/cookies/">Cookies</a>
+        <a href="/reviews/contact/">Contact</a>
+    </div>
+</footer>
+
+<style>
+.footer {
+    margin-top: 80px;
+    padding: 25px 0;
+    text-align: center;
+    color: #ccc;
+    font-size: 0.95rem;
+    border-top: 1px solid #ffffff15;
+}
+
+.footer-links {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+}
+
+.footer-links a {
+    color: #b38bff;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: #dcb9ff;
+    text-shadow: 0 0 8px #b38bff;
+}
+</style>
+
+<!--  === IMPORTANT — ALLOWS PAGE SCRIPTS === -->
+{% block extra_scripts %}{% endblock %}
+
+</body>
+</html>

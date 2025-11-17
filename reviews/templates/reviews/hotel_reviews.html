@@ -1,0 +1,51 @@
+{% extends 'reviews/base.html' %}
+
+{% block content %}
+
+<h1 class="page-title">{{ hotel.name }} — Employee Reviews</h1>
+
+<form method="GET" class="filter-form">
+    <label for="department">Filter by Department:</label>
+    <select name="department" id="department" onchange="this.form.submit()">
+        <option value="">All Departments</option>
+        {% for dept in departments %}
+            <option value="{{ dept.id }}" {% if selected_department == dept.id|stringformat:'s' %}selected{% endif %}>
+                {{ dept.name }}
+            </option>
+        {% endfor %}
+    </select>
+</form>
+
+<div class="review-list">
+    {% for review in reviews %}
+    <div class="review-card">
+        <div class="review-rating">⭐ {{ review.rating }}/10</div>
+
+        <div class="review-meta">
+            {{ review.department.name }} • 
+            {% if review.is_verified %}
+                <span class="verified">Verified</span>
+            {% else %}
+                <span class="pending">Pending</span>
+            {% endif %}
+        </div>
+
+        <p class="review-comment">
+            "{{ review.comment }}"
+        </p>
+
+        <div class="review-author">
+            — {{ review.author }} 
+            <span class="review-date">{{ review.created_at|date:"M d, Y" }}</span>
+        </div>
+    </div>
+    {% empty %}
+    <p style="text-align:center; opacity:0.6; margin-top:40px;">
+        No reviews found for this department.
+    </p>
+    {% endfor %}
+</div>
+
+<a href="/submit/" class="add-review-btn">+ Leave a Review</a>
+
+{% endblock %}

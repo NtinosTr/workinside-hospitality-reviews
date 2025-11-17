@@ -1,0 +1,46 @@
+{% extends 'reviews/base.html' %}
+
+{% block content %}
+<h2 style="margin-bottom: 20px;">Add Hotel</h2>
+
+<input type="text" id="hotel-search" placeholder="Search hotels..." autocomplete="off" style="width: 100%; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+
+<ul id="results" style="list-style: none; padding-left: 0;"></ul>
+
+<script>
+document.getElementById("hotel-search").addEventListener("input", function () {
+    let q = this.value;
+    if (q.length < 2) {
+        document.getElementById("results").innerHTML = "";
+        return;
+    }
+
+    fetch(`/reviews/search-hotels-api/?q=${q}`)
+        .then(res => res.json())
+        .then(data => {
+            let html = "";
+            data.forEach(item => {
+                html += `<li class="hotel-result" 
+                            data-name="${item.name}" 
+                            data-lat="${item.lat}" 
+                            data-lon="${item.lon}">
+                            ${item.name}
+                         </li>`;
+            });
+            document.getElementById("results").innerHTML = html;
+        });
+});
+
+document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("hotel-result")) {
+        let name = e.target.dataset.name;
+        let lat = e.target.dataset.lat;
+        let lon = e.target.dataset.lon;
+
+        alert("You selected: " + name);
+
+        // TODO: Here we will send to backend and auto-create the Hotel object
+    }
+});
+</script>
+{% endblock %}

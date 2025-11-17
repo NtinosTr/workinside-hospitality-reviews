@@ -1,0 +1,264 @@
+/**********************************************/
+/* GLOBAL                                      */
+/**********************************************/
+html, body {
+    overflow-x: hidden !important;
+    margin: 0;
+    background: #0b0b0f;
+    color: #ece6ff;
+    font-family: 'Inter', sans-serif;
+}
+
+/**********************************************/
+/* NAVBAR — FINAL PREMIUM VERSION             */
+/**********************************************/
+.navbar {
+    width: 100%;
+    padding: 18px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #0b0b0f;
+    border-bottom: 1px solid rgba(217,168,255,0.15);
+    position: sticky;
+    top: 0;
+    z-index: 200;
+}
+
+/* Left logo container */
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Logo image */
+.logo img {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(217,168,255,0.7));
+    transition: .4s;
+}
+
+.logo:hover img {
+    filter: drop-shadow(0 0 15px rgba(217,168,255,1));
+}
+
+/* Logo text */
+.logo span {
+    font-size: 22px;
+    font-weight: 700;
+    background: linear-gradient(90deg,#d9a8ff,#b46bff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Leave Review button */
+.leave-btn {
+    background: linear-gradient(90deg,#d9a8ff,#b46bff);
+    color: #111;
+    font-weight: 600;
+    padding: 10px 22px;
+    border-radius: 10px;
+    text-decoration: none !important;
+    white-space: nowrap;
+    display: inline-block;
+    box-shadow: 0 0 10px rgba(217,168,255,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: 0.3s ease;
+    margin-right: 10px;
+}
+
+.leave-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 16px rgba(217,168,255,0.6);
+}
+
+.logo, .logo-text, .navbar a {
+    text-decoration: none !important;
+}
+
+/**********************************************/
+/* REVIEW PAGE WRAPPER                         */
+/**********************************************/
+.review-wrapper {
+    max-width: 650px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+.form-container {
+    background: #111;
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0 0 25px rgba(140,0,255,0.25);
+    animation: fadeZoom 0.6s ease;
+}
+
+.page-title {
+    text-align: center;
+    font-size: 32px;
+    color: #d9b6ff;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+/**********************************************/
+/* FORM ELEMENTS                               */
+/**********************************************/
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-group label {
+    display: block;
+    color: #ccc;
+    margin-bottom: 6px;
+    font-size: 15px;
+}
+
+.review-form input,
+.review-form select,
+.review-form textarea {
+    width: 100%;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: .25s;
+}
+
+.review-form input:focus,
+.review-form select:focus,
+.review-form textarea:focus {
+    border-color: #b05cff;
+    box-shadow: 0 0 12px rgba(176,92,255,0.35);
+}
+
+/* Disable resize */
+.review-textarea {
+    resize: none !important;
+}
+
+/**********************************************/
+/* STAR RATING                                 */
+/**********************************************/
+.rating-stars {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 12px 0 20px 0;
+}
+
+.star {
+    font-size: 32px;
+    cursor: pointer;
+    color: #444;
+    transition: .25s;
+}
+
+.star:hover,
+.star.selected {
+    color: #d9b6ff;
+    text-shadow: 0 0 12px rgba(217,182,255,0.9);
+    transform: scale(1.18);
+}
+
+/**********************************************/
+/* TERMS                                       */
+/**********************************************/
+.terms {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ccc;
+    font-size: 14px;
+    margin: 15px 0 25px 0;
+}
+
+.terms input {
+    width: 18px;
+    height: 18px;
+}
+
+/**********************************************/
+/* SUBMIT BUTTON                               */
+/**********************************************/
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(90deg,#b05cff,#d9b6ff);
+    border: none;
+    border-radius: 10px;
+    color: #111;
+    font-weight: 700;
+    font-size: 17px;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.submit-btn:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 22px rgba(185,90,255,0.6);
+}
+
+/**********************************************/
+/* FOOTER                                      */
+/**********************************************/
+.footer {
+    margin-top: 80px;
+    padding: 25px 0;
+    text-align: center;
+    color: #ccc;
+    font-size: 0.95rem;
+    border-top: 1px solid #ffffff15;
+}
+
+.footer a {
+    color: #b38bff;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    color: #dcb9ff;
+    text-shadow: 0 0 8px #b38bff;
+}
+
+/**********************************************/
+/* ANIMATIONS                                  */
+/**********************************************/
+@keyframes fadeZoom {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+/* ⭐ PERFECT LEAVE REVIEW BUTTON POSITION & SIZE ⭐ */
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 40px;
+}
+
+/* Move button a bit LEFT (not touching right edge) */
+.navbar .leave-btn {
+    margin-right: 40px !important;   /* ← μετακινεί το κουμπί 40px πιο μέσα */
+    padding: 8px 18px !important;    /* μικρότερο κουμπί */
+    font-size: 14px !important;      /* μικρότερο κείμενο */
+    border-radius: 8px !important;   /* πιο compact */
+    white-space: nowrap !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Hover */
+.navbar .leave-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 12px rgba(217,168,255,0.6);
+}
+

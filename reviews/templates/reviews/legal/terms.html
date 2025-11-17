@@ -1,0 +1,70 @@
+{% extends "reviews/base.html" %}
+{% block content %}
+
+<div class="legal-page">
+    <h1>Terms of Service</h1>
+    <p>Last updated: {{ now|date:"F d, Y" }}</p>
+
+    <h2>1. Purpose of WorkInside</h2>
+    <p>
+        WorkInside is an independent platform designed to help hospitality employees share
+        workplace experiences anonymously. We are not affiliated with any hotel or employer.
+    </p>
+
+    <h2>2. User Responsibilities</h2>
+    <ul>
+        <li>Provide honest, personal experiences.</li>
+        <li>Avoid defamation, threats, or unlawful content.</li>
+        <li>Do not impersonate other individuals.</li>
+        <li>Do not include confidential company documents.</li>
+    </ul>
+
+    <h2>3. Content Ownership</h2>
+    <p>
+        You retain ownership of your submitted content.
+        By posting a review, you grant WorkInside a non-exclusive license to display it publicly.
+    </p>
+
+    <h2>4. Platform Liability</h2>
+    <p>
+        WorkInside is not liable for the accuracy of user-generated content.
+        Reviews reflect the personal opinions of individual contributors, not of WorkInside.
+    </p>
+
+    <h2>5. Removal of Content</h2>
+    <p>
+        We reserve the right to remove content that violates our guidelines or legal requirements.
+        You may also request removal of your own content at any time.
+    </p>
+
+    <h2>6. Account Verification</h2>
+    <p>
+        Email verification may be required to ensure authenticity and prevent spam.
+    </p>
+
+    <h2>7. Prohibited Behavior</h2>
+    <ul>
+        <li>Harassment or hate speech</li>
+        <li>False representation or fabricated experiences</li>
+        <li>Sharing private employee information</li>
+    </ul>
+
+    <h2>8. Modifications</h2>
+    <p>
+        We may update these Terms periodically. Continued use of the platform constitutes acceptance.
+    </p>
+
+    <h2>9. Contact Us</h2>
+    <p>
+        For legal inquiries, reach us at:<br>
+        <strong>workinside.contact@gmail.com</strong>
+    </p>
+</div>
+
+<style>
+.legal-page { max-width: 900px; margin: 50px auto; color:#eee; line-height:1.6; }
+.legal-page h1 { font-size:2rem; margin-bottom:15px; color:#d9a8ff; }
+.legal-page h2 { margin-top:30px; color:#c79bff; }
+</style>
+
+{% endblock %}

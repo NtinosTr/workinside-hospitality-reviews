@@ -1,0 +1,50 @@
+{% extends "reviews/base.html" %}
+{% block content %}
+
+<div class="legal-page">
+    <h1>Cookie Policy</h1>
+    <p>Last updated: {{ now|date:"F d, Y" }}</p>
+
+    <h2>1. What Are Cookies?</h2>
+    <p>
+        Cookies are small text files stored on your device to enhance platform functionality,
+        security, and performance.
+    </p>
+
+    <h2>2. Types of Cookies We Use</h2>
+    <ul>
+        <li><strong>Essential Cookies</strong> – required for the platform to function.</li>
+        <li><strong>Analytics Cookies</strong> – help us understand usage patterns.</li>
+        <li><strong>Security Cookies</strong> – protect against spam and abuse.</li>
+    </ul>
+
+    <h2>3. Why We Use Cookies</h2>
+    <ul>
+        <li>To improve performance</li>
+        <li>To maintain login or verification sessions</li>
+        <li>To monitor and prevent abuse</li>
+    </ul>
+
+    <h2>4. How You Can Control Cookies</h2>
+    <p>You can disable cookies in your browser settings, though some features may stop working.</p>
+
+    <h2>5. Third-Party Cookies</h2>
+    <p>
+        We may use trusted third-party services for analytics or email verification.
+        These services follow GDPR compliance requirements.
+    </p>
+
+    <h2>6. Contact Us</h2>
+    <p>
+        For cookie-related questions, reach us at:<br>
+        <strong>workinside.contact@gmail.com</strong>
+    </p>
+</div>
+
+<style>
+.legal-page { max-width: 900px; margin: 50px auto; color:#eee; line-height:1.6; }
+.legal-page h1 { font-size:2rem; margin-bottom:15px; color:#d9a8ff; }
+.legal-page h2 { margin-top:30px; color:#c79bff; }
+</style>
+
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'reviews/base.html' %}
+{% block content %}
+<h1>Request Review Removal</h1>
+<p>If you believe a review violates our Terms, submit a removal request.</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <label>Review ID</label>
+    <input type="text" name="review_id" required>
+
+    <label>Your reason</label>
+    <textarea name="reason" required></textarea>
+
+    <button type="submit">Submit Request</button>
+</form>
+
+{% if success %}
+    <p style="color:green">{{ success }}</p>
+{% endif %}
+{% endblock %}

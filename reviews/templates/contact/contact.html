@@ -1,0 +1,68 @@
+{% extends 'reviews/base.html' %}
+
+{% block content %}
+<div class="contact-container fadeZoom">
+    <h2>Contact Us</h2>
+    <p>If you have any questions, suggestions, or feedback about WorkInside, feel free to reach us at:</p>
+
+    <div class="email-box">
+        <a href="mailto:workinside.contact@gmail.com">workinside.contact@gmail.com</a>
+    </div>
+
+    <p style="margin-top: 20px;">We usually respond within 24–48 hours.</p>
+
+    <div class="collaboration-box">
+        <h3>Collaboration</h3>
+        <p>
+            If you are a developer, designer, or hospitality professional and want to collaborate,
+            share ideas, or contribute to the WorkInside project, feel free to contact us.
+        </p>
+        <p>We are open to partnerships, feature suggestions, and community contributions.</p>
+    </div>
+</div>
+
+<style>
+.contact-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #ffffff11;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0 20px #00000033;
+}
+
+.contact-container h2 {
+    margin-bottom: 20px;
+}
+
+.email-box {
+    margin-top: 20px;
+    padding: 15px;
+    background: #6a0dad;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+.email-box a {
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 1.1em;
+}
+
+.collaboration-box {
+    margin-top: 40px;
+    padding: 20px;
+    background: #ffffff0a;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid #ffffff22;
+}
+
+.collaboration-box h3 {
+    margin-bottom: 10px;
+}
+</style>
+{% endblock %}
