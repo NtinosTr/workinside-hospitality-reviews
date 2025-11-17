@@ -5,12 +5,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-oyrasl6^&7b4t(!q90kc=4s)86v3!yf$o#l7p_eg1dd6da!(65'
 
-DEBUG = True
+DEBUG = True  # αλλάζει αυτόματα από Render
 
 ALLOWED_HOSTS = ["*"]
 
+
+# ========================================
+# INSTALLED APPS
+# ========================================
 INSTALLED_APPS = [
-    # Django defaults
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -18,7 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Our App
+    # Our app
     'reviews.apps.ReviewsConfig',
 
     # Third-party
@@ -26,6 +29,10 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 
+
+# ========================================
+# MIDDLEWARE
+# ========================================
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -37,23 +44,29 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
+# ========================================
+# CORS
+# ========================================
 CORS_ALLOW_ALL_ORIGINS = True
 
+
+# ========================================
+# URLS & TEMPLATES
+# ========================================
 ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        
-        # Global templates folder (backend/templates)
         'DIRS': [
-            BASE_DIR / 'backend' / 'templates',
+            BASE_DIR / 'backend' / 'templates',      # global templates
+            BASE_DIR / 'reviews' / 'templates',      # app templates
         ],
-
         'APP_DIRS': True,
-
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -65,6 +78,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
+
+# ========================================
+# DATABASE
+# ========================================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -72,33 +89,38 @@ DATABASES = {
     }
 }
 
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_TZ = True
 
-STATIC_URL = "/static/"
+# ========================================
+# STATIC FILES (CSS, JS, IMAGES)
+# ========================================
+STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+STATIC_ROOT = BASE_DIR / "staticfiles"   # Render needs this
 
 
 # ========================================
-# EMAIL SETTINGS — MAILTRAP (DEV MODE)
+# EMAIL SETTINGS (gmail)
 # ========================================
-
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
 EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = "workinside.contact@gmail.com"  # Από το Mailtrap
-EMAIL_HOST_PASSWORD = "nhemdippumoithho"  # <--- ΜΟΝΟ αυτό αλλάζεις
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-DEFAULT_FROM_EMAIL = "no-reply@workinside.com"
+EMAIL_HOST_USER = "workinside.contact@gmail.com"
+EMAIL_HOST_PASSWORD = "nhemdippumoithho"
 
-# Custom error handlers
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+# ========================================
+# CUSTOM ERROR HANDLERS
+# ========================================
 HANDLER404 = "reviews.views.error_404"
 HANDLER500 = "reviews.views.error_500"
+
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
