@@ -362,3 +362,93 @@ html, body {
 .pac-matched {
     color: #b76dff !important;
 }
+
+/* ============================================== */
+/* HOTEL SEARCH INPUT — FIX FREEZE & LAG         */
+/* ============================================== */
+#hotel-search {
+    background: #1a1a1a !important;
+    border: 1px solid #333 !important;
+    color: #fff !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    font-size: 15px !important;
+
+    width: 100% !important;
+    max-width: 650px !important;
+    margin: 0 auto !important;
+    display: block !important;
+
+    transition: none !important;
+    animation: none !important;
+    filter: none !important;
+
+    -webkit-appearance: none !important;
+    appearance: none !important;
+
+    overflow: visible !important;
+}
+
+#hotel-search::placeholder {
+    color: #777 !important;
+}
+
+/* Remove weird browser icons */
+#hotel-search::-webkit-calendar-picker-indicator,
+#hotel-search::-webkit-inner-spin-button,
+#hotel-search::-webkit-search-cancel-button,
+#hotel-search::-webkit-search-decoration {
+    display: none !important;
+}
+
+
+/* ============================================== */
+/* GOOGLE AUTOCOMPLETE DROPDOWN FIX               */
+/* ============================================== */
+.pac-container {
+    background: #1a1a1a !important;
+    color: #fff !important;
+    border: 1px solid #333 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 0 15px rgba(176,92,255,0.5) !important;
+
+    position: absolute !important;
+    z-index: 999999 !important;
+    margin-top: 6px !important;
+
+    font-size: 15px !important;
+}
+
+.pac-item {
+    padding: 10px 12px !important;
+    color: #ddd !important;
+}
+
+.pac-item:hover {
+    background: #2a2a2a !important;
+}
+
+.pac-item-query {
+    color: #d9b6ff !important;
+}
+
+
+/* ============================================== */
+/* FIX CONTAINER OVERFLOW THAT BREAKS AUTOCOMPLETE */
+/* ============================================== */
+.review-page,
+.review-wrapper,
+.form-container,
+.page-content {
+    overflow: visible !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+
+/* ============================================== */
+/* OPTIONAL - CLEANER MATCH HIGHLIGHT             */
+/* ============================================== */
+.pac-matched {
+    color: #b76dff !important;
+}
