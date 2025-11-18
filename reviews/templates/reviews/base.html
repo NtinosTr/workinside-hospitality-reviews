@@ -6,16 +6,14 @@
     <meta charset="UTF-8">
     <title>WorkInside</title>
 
-    <!-- CSS -->
     <link rel="stylesheet" href="{% static 'reviews/workinside.css' %}">
-    <link rel="icon" type="image/png" href="{% static 'img/workinside_icon.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'reviews/workinside_icon.png' %}">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
 
-<!-- NAVBAR -->
 <nav class="navbar">
     <a href="{% url 'home' %}" class="logo">
         <img src="{% static 'reviews/workinside_logo_v2.png' %}" alt="WorkInside Logo" class="logo-img">
@@ -25,12 +23,10 @@
     <a href="{% url 'review_form' %}" class="leave-btn">Leave Review</a>
 </nav>
 
-<!-- PAGE CONTENT -->
 <div class="page-content">
     {% block content %}{% endblock %}
 </div>
 
-<!-- FOOTER -->
 <footer class="footer">
     <p>© 2025 WorkInside</p>
     <div class="footer-links">
@@ -41,36 +37,40 @@
     </div>
 </footer>
 
-<style>
-.footer {
-    margin-top: 80px;
-    padding: 25px 0;
-    text-align: center;
-    color: #ccc;
-    font-size: 0.95rem;
-    border-top: 1px solid #ffffff15;
-}
+<!-- ⭐ GOOGLE AUTOCOMPLETE FUNCTION (Global) -->
+<script>
+function initAutocomplete() {
+    const input = document.getElementById("hotel-search");
+    if (!input) return;
 
-.footer-links {
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-}
+    const autocomplete = new google.maps.places.Autocomplete(input, {
+        types: ["establishment"],
+        fields: ["name", "formatted_address", "geometry", "address_components"]
+    });
 
-.footer-links a {
-    color: #b38bff;
-    text-decoration: none;
-    transition: 0.2s ease;
-}
+    autocomplete.addListener("place_changed", () => {
+        const place = autocomplete.getPlace();
+        if (!place) return;
 
-.footer-links a:hover {
-    color: #dcb9ff;
-    text-shadow: 0 0 8px #b38bff;
-}
-</style>
+        document.getElementById("hotel_name").value = place.name || "";
+        document.getElementById("hotel_address").value = place.formatted_address || "";
+        document.getElementById("hotel_lat").value = place.geometry?.location?.lat() || "";
+        document.getElementById("hotel_lon").value = place.geometry?.location?.lng() || "";
 
-<!--  === IMPORTANT — ALLOWS PAGE SCRIPTS === -->
+        let country = "";
+        (place.address_components || []).forEach(c => {
+            if (c.types.includes("country")) {
+                country = c.long_name;
+            }
+        });
+        document.getElementById("hotel_country").value = country || "";
+    });
+}
+</script>
+
+<!-- ⭐ GOOGLE API LOADS ONLY ONCE HERE -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAQHMMhIQ3zkuWsniWhIAupw_a7PfL7qbQ&libraries=places&callback=initAutocomplete" async defer></script>
+
 {% block extra_scripts %}{% endblock %}
 
 </body>

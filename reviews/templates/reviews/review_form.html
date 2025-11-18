@@ -1,6 +1,6 @@
 {% extends 'reviews/base.html' %}
 {% block content %}
-<!-- VERSION 2025 TEST -->
+<!-- VERSION 2025 FIXED -->
 
 <div class="review-page">
   <div class="review-wrapper">
@@ -68,7 +68,7 @@
           ></textarea>
         </div>
 
-        <!-- NAME -->
+        <!-- NAME + EMAIL -->
         <div class="form-group inline-two">
           <div>
             <label>Name (optional)</label>
@@ -80,7 +80,6 @@
             >
           </div>
 
-          <!-- EMAIL -->
           <div>
             <label>Email (for verification)</label>
             <input
@@ -134,42 +133,5 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
-
-<!-- 🏨 GOOGLE AUTOCOMPLETE -->
-<script>
-function initAutocomplete() {
-  const input = document.getElementById("hotel-search");
-  if (!input) return;
-
-  const autocomplete = new google.maps.places.Autocomplete(input, {
-    types: ["establishment"],
-    fields: ["name", "formatted_address", "geometry", "address_components"]
-  });
-
-  autocomplete.addListener("place_changed", () => {
-    const place = autocomplete.getPlace();
-    if (!place) return;
-
-    document.getElementById("hotel_name").value = place.name || "";
-    document.getElementById("hotel_address").value = place.formatted_address || "";
-    document.getElementById("hotel_lat").value = place.geometry?.location?.lat() || "";
-    document.getElementById("hotel_lon").value = place.geometry?.location?.lng() || "";
-
-    let country = "";
-    (place.address_components || []).forEach(c => {
-      if (c.types.includes("country")) {
-        country = c.long_name;
-      }
-    });
-    document.getElementById("hotel_country").value = country || "";
-  });
-}
-</script>
-
-<script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAQHMMhIQ3zkuWsniWhIAupw_a7PfL7qbQ&libraries=places&callback=initAutocomplete"
-  async
-  defer
-></script>
 
 {% endblock %}
