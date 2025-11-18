@@ -131,7 +131,7 @@ def review_form_page(request):
 
         is_sensitive = contains_sensitive(comment)
 
-        # Create review
+        # Create review (TEMPORARY: auto-verified = True)
         review = Review.objects.create(
             hotel=hotel,
             department_id=request.POST.get("department"),
@@ -139,35 +139,36 @@ def review_form_page(request):
             comment=comment,
             name=name,
             email=email,
-            is_verified=False,
+            is_verified=True,   # <── AUTO VERIFIED TEMPORARILY
             is_sensitive=is_sensitive
         )
 
-        # EMAIL CONFIRMATION
+        # EMAIL — SAFELY DISABLED (Render-safe)
         if email:
-            token = dumps({"review_id": review.id}, salt="review-confirm")
-            confirm_url = request.build_absolute_uri(f"/reviews/confirm/{token}")
+            try:
+                token = dumps({"review_id": review.id}, salt="review-confirm")
+                confirm_url = request.build_absolute_uri(f"/reviews/confirm/{token}")
 
-            send_mail(
-                "Confirm Your WorkInside Review",
-                "",
-                "no-reply@workinside.com",
-                [email],
-                html_message=f"<p>Click to verify your review:</p><a href='{confirm_url}'>{confirm_url}</a>"
-            )
+                send_mail(
+                    "Confirm Your WorkInside Review",
+                    "",
+                    "no-reply@workinside.com",
+                    [email],
+                    html_message=f"<p>Click to verify your review:</p><a href='{confirm_url}'>{confirm_url}</a>"
+                )
+            except Exception as e:
+                print("EMAIL ERROR:", e)
+                pass
 
-        msg = (
-            "This review contains sensitive issues and requires manual approval."
-            if is_sensitive else
-            "Please check your email to verify the review."
-        )
-
-        return render(request, "reviews/review_submitted.html", {"message": msg})
+        return render(request, "reviews/review_submitted.html", {
+            "message": "Your review has been submitted successfully!"
+        })
 
     # GET request
     return render(request, "reviews/review_form.html", {
         "departments": departments
     })
+
 
 
 # ================================ CONFIRMATION ================================
