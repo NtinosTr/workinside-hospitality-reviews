@@ -3,7 +3,6 @@ from django.core.mail import send_mail
 from django.core.signing import dumps, loads, SignatureExpired, BadSignature
 from django.db.models import Avg, Count, Q, Subquery, OuterRef
 from django.http import JsonResponse
-from datetime import datetime, timedelta
 import re
 
 from .models import Hotel, Department, Review
@@ -18,8 +17,7 @@ SENSITIVE_KEYWORDS = ["abuse", "harass", "violence", "unsafe"]
 def contains_sensitive(text):
     if not text:
         return False
-    t = text.lower()
-    return any(k in t for k in SENSITIVE_KEYWORDS)
+    return any(k in text.lower() for k in SENSITIVE_KEYWORDS)
 
 
 def contains_contact(text):
@@ -35,16 +33,15 @@ def contains_contact(text):
 def contains_banned(text):
     if not text:
         return False
-    t = text.lower()
-    return any(k in t for k in BANNED_KEYWORDS)
+    return any(k in text.lower() for k in BANNED_KEYWORDS)
 
 
 # ================================ HOME PAGE ================================
 
 def home_page(request):
 
-    # Subquery: average rating only from verified reviews
-    avg_rating_subquery = (
+    # Avg rating only from verified reviews
+    avg_rating_sub = (
         Review.objects
         .filter(hotel=OuterRef("pk"), is_verified=True)
         .values("hotel")
@@ -54,14 +51,12 @@ def home_page(request):
 
     top_hotels = (
         Hotel.objects
-        .annotate(avg_rating=Subquery(avg_rating_subquery))
+        .annotate(avg_rating=Subquery(avg_rating_sub))
         .filter(avg_rating__isnull=False)
         .order_by("-avg_rating")[:10]
     )
 
-    return render(request, "reviews/home.html", {
-        "top_hotels": top_hotels,
-    })
+    return render(request, "reviews/home.html", {"top_hotels": top_hotels})
 
 
 # ================================ REVIEW FORM ================================
@@ -83,7 +78,7 @@ def review_form_page(request):
                 "error": "Please choose a hotel from suggestions."
             })
 
-        # Create OR get hotel
+        # Create or fetch hotel
         hotel, created = Hotel.objects.get_or_create(
             name=hotel_name,
             defaults={
@@ -93,7 +88,6 @@ def review_form_page(request):
             }
         )
 
-        # update only missing fields
         if not created:
             changed = False
             if not hotel.location:
@@ -114,7 +108,7 @@ def review_form_page(request):
         name = request.POST.get("name") or "Anonymous"
         email = request.POST.get("email")
 
-        # validation rules
+        # Validation
         errors = []
         if len(comment) < 20:
             errors.append("Write at least 20 characters.")
@@ -131,7 +125,7 @@ def review_form_page(request):
 
         is_sensitive = contains_sensitive(comment)
 
-        # Create review (TEMPORARY: auto-verified = True)
+        # Create review (auto-verified for now)
         review = Review.objects.create(
             hotel=hotel,
             department_id=request.POST.get("department"),
@@ -139,11 +133,11 @@ def review_form_page(request):
             comment=comment,
             name=name,
             email=email,
-            is_verified=True,   # <── AUTO VERIFIED TEMPORARILY
+            is_verified=True,
             is_sensitive=is_sensitive
         )
 
-        # EMAIL — SAFELY DISABLED (Render-safe)
+        # EMAIL (safe mode)
         if email:
             try:
                 token = dumps({"review_id": review.id}, salt="review-confirm")
@@ -164,11 +158,7 @@ def review_form_page(request):
             "message": "Your review has been submitted successfully!"
         })
 
-    # GET request
-    return render(request, "reviews/review_form.html", {
-        "departments": departments
-    })
-
+    return render(request, "reviews/review_form.html", {"departments": departments})
 
 
 # ================================ CONFIRMATION ================================
@@ -262,8 +252,7 @@ def search_hotels(request):
                 "id": h.id,
                 "name": h.name,
                 "country": h.location or ""
-            }
-            for h in hotels
+            } for h in hotels
         ]
     })
 
