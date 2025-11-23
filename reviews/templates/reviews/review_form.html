@@ -1,6 +1,5 @@
 {% extends 'reviews/base.html' %}
 {% block content %}
-<!-- VERSION 2025 FIXED -->
 
 <div class="review-page">
   <div class="review-wrapper">
@@ -15,7 +14,7 @@
       <form method="POST" class="review-form">
         {% csrf_token %}
 
-        <!-- HOTEL (Google Places) -->
+        <!-- ⭐ HOTEL SEARCH -->
         <div class="form-group">
           <label>Hotel</label>
           <input
@@ -35,7 +34,7 @@
         <input type="hidden" name="hotel_lat" id="hotel_lat">
         <input type="hidden" name="hotel_lon" id="hotel_lon">
 
-        <!-- DEPARTMENT -->
+        <!-- ⭐ DEPARTMENT -->
         <div class="form-group">
           <label>Department</label>
           <select name="department" class="input-field" required>
@@ -45,7 +44,7 @@
           </select>
         </div>
 
-        <!-- RATING -->
+        <!-- ⭐ RATING -->
         <div class="form-group">
           <label>Rating</label>
           <div class="rating-stars centered">
@@ -56,7 +55,7 @@
           <input type="hidden" name="rating" id="rating" required>
         </div>
 
-        <!-- REVIEW TEXT -->
+        <!-- ⭐ REVIEW TEXT -->
         <div class="form-group">
           <label>Your Review</label>
           <textarea
@@ -68,7 +67,7 @@
           ></textarea>
         </div>
 
-        <!-- NAME + EMAIL -->
+        <!-- ⭐ NAME + EMAIL -->
         <div class="form-group inline-two">
           <div>
             <label>Name (optional)</label>
@@ -81,7 +80,7 @@
           </div>
 
           <div>
-            <label>Email (for verification)</label>
+            <label>Email</label>
             <input
               name="email"
               type="email"
@@ -92,7 +91,7 @@
           </div>
         </div>
 
-        <!-- TERMS -->
+        <!-- ⭐ TERMS -->
         <div class="terms">
           <input type="checkbox" name="agree" required>
           <span>
@@ -100,7 +99,7 @@
           </span>
         </div>
 
-        <!-- SUBMIT -->
+        <!-- ⭐ SUBMIT -->
         <button type="submit" class="submit-btn">
           Submit Review
         </button>
@@ -110,28 +109,26 @@
   </div>
 </div>
 
+{% block extra_scripts %}
+
 <!-- ⭐ STAR RATING SCRIPT -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const stars = document.querySelectorAll(".rating-stars .star");
   const ratingInput = document.getElementById("rating");
 
-  if (!stars.length || !ratingInput) return;
-
   stars.forEach(star => {
     star.addEventListener("click", () => {
       const value = parseInt(star.dataset.value, 10);
       ratingInput.value = value;
 
-      stars.forEach(s => {
-        s.classList.toggle(
-          "selected",
-          parseInt(s.dataset.value, 10) <= value
-        );
-      });
+      stars.forEach(s =>
+        s.classList.toggle("selected", parseInt(s.dataset.value, 10) <= value)
+      );
     });
   });
 });
 </script>
 
+{% endblock %}
 {% endblock %}

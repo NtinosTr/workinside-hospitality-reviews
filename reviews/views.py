@@ -1,9 +1,7 @@
 from django.shortcuts import render, get_object_or_404
-from django.core.mail import send_mail
-from django.core.signing import dumps, loads, SignatureExpired, BadSignature
-from django.db.models import Avg, Count, Q, Subquery, OuterRef
+from django.db.models import Avg, Count, Subquery, OuterRef
 from django.http import JsonResponse
-from datetime import datetime, timedelta
+from django.core.signing import loads, dumps, SignatureExpired, BadSignature
 import re
 
 from .models import Hotel, Department, Review
@@ -124,7 +122,7 @@ def review_form_page(request):
 
         is_sensitive = contains_sensitive(comment)
 
-        # TEMPORARY: auto-verify review
+        # TEMPORARY: AUTO-VERIFY every review
         review = Review.objects.create(
             hotel=hotel,
             department_id=request.POST.get("department"),
@@ -132,13 +130,12 @@ def review_form_page(request):
             comment=comment,
             name=name,
             email=email,
-            is_verified=True,
+            is_verified=True,      # ← AUTO VERIFIED
             is_sensitive=is_sensitive
         )
 
-        # EMAIL DISABLED — prevents Render timeout
-        if email:
-            print("EMAIL DISABLED: would send confirmation to:", email)
+        # NO EMAIL — bypass Render timeout
+        print("EMAIL DISABLED (Render-safe) — would send to:", email)
 
         return render(request, "reviews/review_submitted.html", {
             "message": "Your review has been submitted successfully!"
