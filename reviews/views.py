@@ -3,6 +3,7 @@ from django.core.mail import send_mail
 from django.core.signing import dumps, loads, SignatureExpired, BadSignature
 from django.db.models import Avg, Count, Q, Subquery, OuterRef
 from django.http import JsonResponse
+from datetime import datetime, timedelta
 import re
 
 from .models import Hotel, Department, Review
@@ -39,9 +40,7 @@ def contains_banned(text):
 # ================================ HOME PAGE ================================
 
 def home_page(request):
-
-    # Avg rating only from verified reviews
-    avg_rating_sub = (
+    avg_rating_subquery = (
         Review.objects
         .filter(hotel=OuterRef("pk"), is_verified=True)
         .values("hotel")
@@ -51,7 +50,7 @@ def home_page(request):
 
     top_hotels = (
         Hotel.objects
-        .annotate(avg_rating=Subquery(avg_rating_sub))
+        .annotate(avg_rating=Subquery(avg_rating_subquery))
         .filter(avg_rating__isnull=False)
         .order_by("-avg_rating")[:10]
     )
@@ -66,7 +65,7 @@ def review_form_page(request):
 
     if request.method == "POST":
 
-        # Google Autocomplete fields
+        # Google fields
         hotel_name = request.POST.get("hotel_name")
         hotel_location = request.POST.get("hotel_address") or ""
         hotel_lat = request.POST.get("hotel_lat") or ""
@@ -78,7 +77,6 @@ def review_form_page(request):
                 "error": "Please choose a hotel from suggestions."
             })
 
-        # Create or fetch hotel
         hotel, created = Hotel.objects.get_or_create(
             name=hotel_name,
             defaults={
@@ -88,8 +86,9 @@ def review_form_page(request):
             }
         )
 
+        # Update only if empty
+        changed = False
         if not created:
-            changed = False
             if not hotel.location:
                 hotel.location = hotel_location
                 changed = True
@@ -108,7 +107,7 @@ def review_form_page(request):
         name = request.POST.get("name") or "Anonymous"
         email = request.POST.get("email")
 
-        # Validation
+        # BASIC VALIDATION
         errors = []
         if len(comment) < 20:
             errors.append("Write at least 20 characters.")
@@ -125,7 +124,7 @@ def review_form_page(request):
 
         is_sensitive = contains_sensitive(comment)
 
-        # Create review (auto-verified for now)
+        # TEMPORARY: auto-verify review
         review = Review.objects.create(
             hotel=hotel,
             department_id=request.POST.get("department"),
@@ -137,22 +136,9 @@ def review_form_page(request):
             is_sensitive=is_sensitive
         )
 
-        # EMAIL (safe mode)
+        # EMAIL DISABLED — prevents Render timeout
         if email:
-            try:
-                token = dumps({"review_id": review.id}, salt="review-confirm")
-                confirm_url = request.build_absolute_uri(f"/reviews/confirm/{token}")
-
-                send_mail(
-                    "Confirm Your WorkInside Review",
-                    "",
-                    "no-reply@workinside.com",
-                    [email],
-                    html_message=f"<p>Click to verify your review:</p><a href='{confirm_url}'>{confirm_url}</a>"
-                )
-            except Exception as e:
-                print("EMAIL ERROR:", e)
-                pass
+            print("EMAIL DISABLED: would send confirmation to:", email)
 
         return render(request, "reviews/review_submitted.html", {
             "message": "Your review has been submitted successfully!"
@@ -201,7 +187,7 @@ def hotel_detail(request, hotel_id):
     })
 
 
-# ================================ FILTER REVIEWS ================================
+# ================================ FILTER ================================
 
 def filter_reviews(request, hotel_id):
     hotel = get_object_or_404(Hotel, id=hotel_id)
@@ -233,13 +219,13 @@ def load_more_reviews(request, hotel_id):
     reviews = Review.objects.filter(
         hotel_id=hotel_id,
         is_verified=True,
-        is_sensitive=False,
+        is_sensitive=False
     ).order_by("-created_at")[offset:offset + 5]
 
     return render(request, "reviews/reviews_list.html", {"reviews": reviews})
 
 
-# ================================ SEARCH BAR ================================
+# ================================ SEARCH ================================
 
 def search_hotels(request):
     q = request.GET.get("q", "").strip()
@@ -248,11 +234,8 @@ def search_hotels(request):
 
     return JsonResponse({
         "results": [
-            {
-                "id": h.id,
-                "name": h.name,
-                "country": h.location or ""
-            } for h in hotels
+            {"id": h.id, "name": h.name, "country": h.location or ""}
+            for h in hotels
         ]
     })
 
@@ -279,13 +262,13 @@ def remove_review_page(request):
     return render(request, "reviews/legal/remove_review.html")
 
 
-# ================================ CONTACT PAGE ================================
+# ================================ CONTACT ================================
 
 def contact_page(request):
     return render(request, "contact/contact.html")
 
 
-# ================================ ADD HOTEL PAGE ================================
+# ================================ ADD HOTEL ================================
 
 def add_hotel_page(request):
     return render(request, "reviews/add_hotel.html")
